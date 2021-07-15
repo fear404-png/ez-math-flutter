@@ -1,5 +1,9 @@
+import 'package:ez_math/pages/game_data.dart';
 import 'package:ez_math/resource/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc_game.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -38,11 +42,17 @@ class _HeadWidget extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          _ProgressBarWidget(),
+          _ProgressBarWidget(
+            type: "lvl",
+            points: GameData.lvl,
+          ),
           SizedBox(
             height: 10,
           ),
-          _ProgressBarWidget(),
+          _ProgressBarWidget(
+            type: "hp",
+            points: GameData.hp,
+          ),
           SizedBox(
             height: 10,
           ),
@@ -66,36 +76,19 @@ class _HeadWidget extends StatelessWidget {
 }
 
 class _ProgressBarWidget extends StatelessWidget {
-  const _ProgressBarWidget({Key? key}) : super(key: key);
+  String _type;
+  int _points;
+  _ProgressBarWidget({Key? key, required String type, required int points})
+      : _type = type,
+        _points = points,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 30,
-      decoration: BoxDecoration(border: Border.all(color: AppColors.accent)),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            "lvl",
-            style: TextStyle(color: AppColors.accent),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          AnimatedContainer(
-            width: 50,
-            height: 23,
-            duration: Duration(milliseconds: 400),
-            color: AppColors.accent,
-            curve: Curves.fastOutSlowIn,
-          ),
-          Expanded(child: Container()),
-        ],
-      ),
-    );
+        alignment: Alignment.centerLeft,
+        child: Text("$_type: $_points",
+            style: TextStyle(color: AppColors.accent)));
   }
 }
 
@@ -111,27 +104,28 @@ class _PointsWidget extends StatelessWidget {
 }
 
 class _TimeBarWidget extends StatelessWidget {
-  const _TimeBarWidget({Key? key}) : super(key: key);
+  _TimeBarWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Text(
-          "13.2",
-          style: TextStyle(fontSize: 20, color: AppColors.accent),
-        ),
-        Text(
-          "13.2",
-          style: TextStyle(fontSize: 30, color: AppColors.accent),
-        ),
-        Text(
-          "13.2",
-          style: TextStyle(fontSize: 20, color: AppColors.accent),
-        ),
-      ],
-    );
+    return BlocBuilder<BlocGame, GameData>(
+        builder: (context, data) => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  "13.2",
+                  style: TextStyle(fontSize: 20, color: AppColors.accent),
+                ),
+                Text(
+                  GameData.curretTime.toString(),
+                  style: TextStyle(fontSize: 30, color: AppColors.accent),
+                ),
+                Text(
+                  "13.2",
+                  style: TextStyle(fontSize: 20, color: AppColors.accent),
+                ),
+              ],
+            ));
   }
 }
 
@@ -147,9 +141,11 @@ class _TaskWidget extends StatelessWidget {
         border: Border.all(color: AppColors.accent),
       ),
       child: Center(
-        child: Text(
-          "144 + 18234812",
-          style: TextStyle(fontSize: 30, color: AppColors.accent),
+        child: BlocBuilder<BlocGame, GameData>(
+          builder: (context, task) => Text(
+            GameData.task,
+            style: TextStyle(fontSize: 30, color: AppColors.accent),
+          ),
         ),
       ),
     );
@@ -168,9 +164,11 @@ class _AnswerWidget extends StatelessWidget {
         border: Border.all(color: AppColors.accent),
       ),
       child: Center(
-        child: Text(
-          "12321321",
-          style: TextStyle(fontSize: 30, color: AppColors.accent),
+        child: BlocBuilder<BlocGame, GameData>(
+          builder: (context, answer) => Text(
+            GameData.userAnswer,
+            style: TextStyle(fontSize: 30, color: AppColors.accent),
+          ),
         ),
       ),
     );
@@ -196,36 +194,60 @@ class _KeyboardWidget extends StatelessWidget {
         Expanded(
           child: Row(
             children: [
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.one, buttonName: "1")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.two, buttonName: "2")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.three, buttonName: "3")),
             ],
           ),
         ),
         Expanded(
           child: Row(
             children: [
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.four, buttonName: "4")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.five, buttonName: "5")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.six, buttonName: "6")),
             ],
           ),
         ),
         Expanded(
           child: Row(
             children: [
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.seven, buttonName: "7")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.eight, buttonName: "8")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.nine, buttonName: "9")),
             ],
           ),
         ),
         Expanded(
           child: Row(
             children: [
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
-              Expanded(child: _ButtonWidget()),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.next, buttonName: "NEXT")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.zero, buttonName: "0")),
+              Expanded(
+                  child: _ButtonWidget(
+                      eventButton: EventButton.del, buttonName: "DEL")),
             ],
           ),
         ),
@@ -235,18 +257,30 @@ class _KeyboardWidget extends StatelessWidget {
 }
 
 class _ButtonWidget extends StatelessWidget {
-  const _ButtonWidget({Key? key}) : super(key: key);
+  _ButtonWidget(
+      {Key? key, required EventButton eventButton, required String buttonName})
+      : _eventButton = eventButton,
+        _buttonName = buttonName,
+        super(key: key);
+  EventButton _eventButton;
+  String _buttonName;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2),
-      child: Container(
-        decoration: BoxDecoration(border: Border.all(color: AppColors.accent)),
-        child: Center(
-          child: Text(
-            "btn",
-            style: TextStyle(color: AppColors.accent, fontSize: 30),
+      child: GestureDetector(
+        onTap: () {
+          BlocProvider.of<BlocGame>(context).add(_eventButton);
+        },
+        child: Container(
+          decoration:
+              BoxDecoration(border: Border.all(color: AppColors.accent)),
+          child: Center(
+            child: Text(
+              "$_buttonName",
+              style: TextStyle(color: AppColors.accent, fontSize: 30),
+            ),
           ),
         ),
       ),
